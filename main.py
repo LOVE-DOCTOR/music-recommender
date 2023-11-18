@@ -63,11 +63,7 @@ def get_information(file):
     return music_title, metadata
                         
                         
-            
-        
-import os
-import json
-import numpy as np
+    
 
 def get_audio_embedding(audio_dir):
     """
