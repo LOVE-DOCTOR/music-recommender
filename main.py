@@ -9,6 +9,7 @@ from glob import glob
 import os
 import json
 import numpy as np
+import librosa
 
 """
 BACKEND USE
@@ -39,9 +40,13 @@ Recommend top 20 results
 app = FastAPI()
 openai.api_key = " "
 vector_db = chromadb.Client()
-path = 'C:/Users/USER/Documents/BIG PERSONAL PROJECTS/music recommendation/music files/'
-audio_dir = glob(path+"/*.mp3")
-audio_length = 5
+mp3_path = 'C:/Users/User/Documents/BIG PERSONAL PROJECTS/music recommendation/music files/'
+mp3_audio_dir = glob(mp3_path+"/*.mp3")
+
+wav_path = 'C:/Users/User/Documents/BIG PERSONAL PROJECTS/music recommendation/music files wav/'
+wav_audio_dir = glob(wav_path+"/*.wav")
+
+audio_length = 10
 
 audio_collection = vector_db.create_collection(name='audio_collection')
 lyric_collection = vector_db.create_collection(name='lyric_collection')
@@ -63,9 +68,6 @@ def get_information(file):
 
     
     return music_title, metadata
-                        
-                        
-    
 
 def get_audio_embedding(audio_dir):
     """
@@ -86,12 +88,11 @@ def get_audio_embedding(audio_dir):
     music_title = []
     i = 0
 
-    for file in audio_dir:
-        
+    for file in range(len(audio_dir)):
         print(f'Getting metadata for {str(i)}')
         
         # Call function to get information (title and metadata) from the audio file
-        tit, met = get_information(file)
+        tit, met = get_information(mp3_audio_dir[file])
         
         # Append title and metadata to corresponding lists
         music_title.append(tit)
@@ -101,11 +102,14 @@ def get_audio_embedding(audio_dir):
         # Print information about sending CURL command
         print('Sending CURL command # '+str(i)+'\n')
         
-        # Get the file extension
-        file_extension = os.path.splitext(file)[1].lstrip('.')
+        audio = os.path.basename(wav_audio_dir[file])
+        
+        # wav_audio = wav_audio_dir[file]
+        # wav_audio_data, _ = librosa.load(wav_audio)
+        # wav_audio_data = wav_audio_data.astype(np.int16).tobytes()
         
         # Construct and execute CURL command to obtain audio embeddings using a local model
-        curl_string = str('curl -F "audio=@'+file+'" -XPOST http://127.0.0.1:5000/model/predict > out_'+str(i)+'.json')
+        curl_string = str('curl -F "audio=@'+audio+'" -XPOST http://127.0.0.1:5000/model/predict > out_'+str(i)+'.json')
         os.system(curl_string)
 
         # Open and load the JSON file containing the current audio embedding
@@ -136,6 +140,6 @@ def get_audio_embedding(audio_dir):
 
 
         
-embeddings, metadata, music_title = get_audio_embedding(audio_dir)
+embeddings, metadata, music_title = get_audio_embedding(mp3_audio_dir)
 
 print(metadata)
