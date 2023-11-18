@@ -7,6 +7,7 @@ import chromadb
 from tinytag import TinyTag
 from glob import glob
 import os
+import json
 
 """
 BACKEND USE
