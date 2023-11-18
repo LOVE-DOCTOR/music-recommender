@@ -8,6 +8,7 @@ from tinytag import TinyTag
 from glob import glob
 import os
 import json
+import numpy as np
 
 """
 BACKEND USE
