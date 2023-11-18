@@ -1,0 +1,5 @@
+openai==1.2.2
+tqdm==4.66.1
+chromadb==0.4.16
+uvicorn[standard]==0.24.0
+tinytag==1.10.1
